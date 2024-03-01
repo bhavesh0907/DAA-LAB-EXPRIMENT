@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <string.h>
+
+// Function to find the longest common subsequence (LCS) of two strings
+void lcs(char *X, char *Y, int m, int n) {
+    int L[m + 1][n + 1];
+    int i, j;
+
+    // Build the L[m+1][n+1] table in bottom-up manner
+    for (i = 0; i <= m; i++) {
+        for (j = 0; j <= n; j++) {
+            if (i == 0 || j == 0)
+                L[i][j] = 0;
+            else if (X[i - 1] == Y[j - 1])
+                L[i][j] = L[i - 1][j - 1] + 1;
+            else
+                L[i][j] = (L[i - 1][j] > L[i][j - 1]) ? L[i - 1][j] : L[i][j - 1];
+        }
+    }
+
+    // Find the LCS by tracing back the L[m+1][n+1] table
+    int index = L[m][n];
+    char lcs[index + 1];
+    lcs[index] = '\0'; // Set the null character
+
+    // Start from the right-bottom corner and traverse the L[m+1][n+1] table
+    i = m, j = n;
+    while (i > 0 && j > 0) {
+        // If the current characters in X and Y are equal, store the character in the LCS
+        if (X[i - 1] == Y[j - 1]) {
+            lcs[index - 1] = X[i - 1];
+            i--;
+            j--;
+            index--;
+        }
+        // If the characters are not equal, then go in the direction of the greater value in the L[m+1][n+1] table
+        else if (L[i - 1][j] > L[i][j - 1])
+            i--;
+        else
+            j--;
+    }
+
+    // Print the LCS
+    printf("Longest Common Subsequence (LCS): %s\n", lcs);
+}
+
+int main() {
+    char X[] = "AGGTAB";
+    char Y[] = "GXTXAYB";
+    int m = strlen(X);
+    int n = strlen(Y);
+    lcs(X, Y, m, n);
+    return 0;
+}
