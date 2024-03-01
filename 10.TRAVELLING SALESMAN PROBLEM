@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define V 4
+
+// Function to find the minimum of two integers
+int min(int a, int b) {
+    return (a < b) ? a : b;
+}
+
+// Function to find the cost of the tour when all cities are visited once
+int tsp(int graph[V][V], int visited[], int current, int n, int count, int cost, int ans) {
+    if (count == n && graph[current][0]) {
+        ans = min(ans, cost + graph[current][0]);
+        return ans;
+    }
+
+    // Backtracking to visit all cities
+    for (int i = 0; i < n; i++) {
+        if (!visited[i] && graph[current][i]) {
+            visited[i] = 1;
+            ans = tsp(graph, visited, i, n, count + 1, cost + graph[current][i], ans);
+            visited[i] = 0;
+        }
+    }
+    return ans;
+}
+
+// Function to find the minimum cost of the tour
+int findMinCost(int graph[V][V], int n) {
+    int visited[V] = {0};  // Initialize all cities as unvisited
+    visited[0] = 1;  // Start from the first city
+    int ans = INT_MAX;
+
+    // Find the minimum cost of the tour
+    ans = tsp(graph, visited, 0, n, 1, 0, ans);
+
+    return ans;
+}
+
+int main() {
+    // Example graph with 4 cities
+    int graph[V][V] = {{0, 10, 15, 20},
+                       {10, 0, 35, 25},
+                       {15, 35, 0, 30},
+                       {20, 25, 30, 0}};
+    int n = V;  // Number of cities
+
+    // Find the minimum cost of the tour
+    int minCost = findMinCost(graph, n);
+    printf("Minimum cost of the tour: %d\n", minCost);
+    return 0;
+}
